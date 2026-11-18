@@ -16,8 +16,9 @@ jobs:
         run: |
           mkdir -p www
           cp index.html manifest.webmanifest sw.js icon-192.png icon-512.png www/
+          cp -r lib www/
           npm init -y
-          npm i @capacitor/core @capacitor/cli @capacitor/android
+          npm i @capacitor/core @capacitor/cli @capacitor/android @capacitor/filesystem @capacitor/share
       - name: Create Android project and build
         run: |
           npx cap add android

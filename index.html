@@ -1,325 +1,571 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ProCV – ATS Resume, CV & Visiting Card Maker</title>
+<title>ProCV – ATS Resume, Cover Letter, Cards & Design Studio</title>
 <link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#4f46e5">
 <link rel="icon" href="icon-192.png">
 <style>
 :root{--ac:#4f46e5;--bg:#f4f5f9;--tx:#1f2430;--mut:#6b7280;--bd:#e3e6ee}
 *{box-sizing:border-box}
 body{margin:0;font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--tx)}
-header{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#fff;border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:5;flex-wrap:wrap}
-header h1{font-size:18px;margin:0;flex:1;white-space:nowrap}
-button{font:inherit;border:1px solid var(--bd);background:#fff;border-radius:8px;padding:7px 11px;cursor:pointer}
+header{display:flex;align-items:center;gap:6px;padding:8px 12px;background:#fff;border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:5}
+header h1{font-size:17px;margin:0;white-space:nowrap}
+header select{flex:1;min-width:0;max-width:220px}
+button{font:inherit;border:1px solid var(--bd);background:#fff;border-radius:8px;padding:7px 11px;cursor:pointer;color:var(--tx)}
 button:hover{border-color:#b9bfd0}
 button.pri{background:#4f46e5;color:#fff;border-color:#4f46e5}
 button.dng{color:#c0262d}
 button:disabled{opacity:.5;cursor:wait}
-.layout{display:grid;grid-template-columns:minmax(340px,470px) 1fr;height:calc(100vh - 56px)}
+.layout{display:grid;grid-template-columns:minmax(340px,480px) 1fr;height:calc(100vh - 53px)}
+.layout.studio{grid-template-columns:1fr}.layout.studio .preview{display:none}
 .editor{overflow:auto;padding:12px;background:#fff;border-right:1px solid var(--bd)}
-.preview{overflow:auto;padding:16px}
-.tabs{display:flex;gap:4px;margin-bottom:10px;position:sticky;top:-12px;background:#fff;padding:6px 0;z-index:2}
-.tabs button{flex:1;padding:7px 4px}
+.preview{overflow:auto;padding:16px;position:relative}
+#pg{position:sticky;top:0;float:right;background:#1f2430;color:#fff;border-radius:99px;padding:2px 10px;font-size:12px;z-index:3}
+.tabs{display:flex;gap:4px;margin-bottom:10px;position:sticky;top:-12px;background:#fff;padding:6px 0;z-index:2;overflow-x:auto}
+.tabs button{flex:none;padding:7px 10px;white-space:nowrap}
 .tabs button.on{background:#4f46e5;color:#fff;border-color:#4f46e5}
 .pane{display:none}.pane.on{display:block}
 label{display:block;font-size:12px;color:var(--mut);margin:8px 0 3px}
+label.ck{display:flex;gap:8px;align-items:center;color:var(--tx);font-size:13px}label.ck input{width:auto}
 input,textarea,select{width:100%;font:inherit;padding:7px 9px;border:1px solid var(--bd);border-radius:8px;background:#fff;color:var(--tx)}
+input[type=range]{padding:0}input[type=color]{height:38px;padding:2px}
 textarea{resize:vertical}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 h2{font-size:14px;margin:16px 0 6px}
+details{border:1px solid var(--bd);border-radius:10px;padding:6px 10px;margin:10px 0}summary{cursor:pointer;font-weight:600}
 .ci{border:1px solid var(--bd);border-radius:10px;padding:8px;margin:8px 0;background:#fafbff}
 .ci input,.ci textarea{margin-top:4px}
 .rowb{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
-.tpls{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.tpls button.on{outline:2px solid #4f46e5}
+.tpls{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.tpls button{padding:6px 2px;font-size:12px}.tpls button.on{outline:2px solid #4f46e5}
+.sw{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.sw i{width:26px;height:26px;border-radius:50%;cursor:pointer;border:2px solid #fff;box-shadow:0 0 0 1px #ccc}
+.srow{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--bd);border-radius:8px;padding:4px 8px;margin:4px 0}
 .note{font-size:12px;color:var(--mut);margin:4px 0}
-.bar{height:10px;background:#e8eaf3;border-radius:6px;overflow:hidden}
-.bar i{display:block;height:100%;background:#16a34a}
-.chip{display:inline-block;padding:2px 8px;margin:2px;border-radius:99px;font-size:12px;background:#e8f7ee;color:#166534}
-.chip.miss{background:#fdecec;color:#991b1b}
+.bar{height:10px;background:#e8eaf3;border-radius:6px;overflow:hidden}.bar i{display:block;height:100%}
+.chip{display:inline-block;padding:2px 8px;margin:2px;border-radius:99px;font-size:12px;background:#e8f7ee;color:#166534}.chip.miss{background:#fdecec;color:#991b1b}
+.sev{padding:6px 8px;border-radius:8px;margin:4px 0;font-size:13px}.sev.h{background:#fdecec}.sev.m{background:#fff4e0}.sev.l{background:#eef2ff}
 .out{white-space:pre-wrap;background:#f6f7fb;border:1px solid var(--bd);border-radius:8px;padding:8px;margin-top:6px}
-#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#1f2430;color:#fff;padding:8px 14px;border-radius:8px;display:none;z-index:20;max-width:90vw}
-dialog{border:0;border-radius:12px;padding:16px;max-width:420px;width:92vw}
-#scalerBox{margin:0 auto}
-#scaler{width:794px;transform-origin:top left}
-.sheet{width:794px;min-height:1123px;background:#fff;color:#111;box-shadow:0 2px 14px rgba(0,0,0,.18);padding:40px 44px;-webkit-print-color-adjust:exact;print-color-adjust:exact;box-decoration-break:clone;-webkit-box-decoration-break:clone}
-.sheet h1{margin:0;font-size:30px;line-height:1.1}
-.sheet h3{margin:14px 0 6px;font-size:12.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ac);border-bottom:1.5px solid var(--ac);padding-bottom:3px}
-.sheet .ti{font-size:15px;color:#444;margin-top:3px}
-.sheet .ct{font-size:12px;color:#444;margin-top:6px}
-.sheet .it{margin-bottom:9px;break-inside:avoid}
-.sheet .r{display:flex;justify-content:space-between;gap:10px;font-size:13px}.sheet .r i{color:#555;font-style:normal;white-space:nowrap;font-size:12px}
-.sheet .co{font-size:12.5px;color:#444}
-.sheet ul{margin:3px 0 0;padding-left:18px;font-size:12.5px}.sheet li{margin:1px 0}
-.sheet p{margin:0;font-size:12.5px}
-.sheet img.ph{width:96px;height:96px;object-fit:cover;border-radius:50%}
-.t-classic .hd,.t-compact .hd{display:flex;gap:16px;align-items:center}
-.t-classic .hd{border-bottom:3px solid var(--ac);padding-bottom:10px}
-.t-compact{padding:28px 34px}.t-compact h1{font-size:25px}.t-compact .it{margin-bottom:6px}.t-compact ul,.t-compact p,.t-compact .r{font-size:12px}.t-compact img.ph{width:72px;height:72px}
-.t-modern{background:linear-gradient(to right,var(--ac) 0 255px,#fff 255px);padding:0;display:grid;grid-template-columns:255px 1fr}
-.t-modern aside{color:#fff;padding:36px 20px;font-size:12.5px}
-.t-modern aside h3{color:#fff;border-color:rgba(255,255,255,.6)}
-.t-modern aside img.ph{display:block;margin:0 auto 14px;width:130px;height:130px}
-.t-modern aside div{margin:3px 0;word-break:break-word}
-.t-modern main{padding:36px 32px 36px 30px}
-.card{width:90mm;height:54mm;background:#fff;box-shadow:0 1px 8px rgba(0,0,0,.2);position:relative;overflow:hidden;font-size:9pt;color:#111;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.c1{padding:6mm}.c1 b{font-size:14pt;display:block;margin-bottom:1mm}.c1 .ln{height:1mm;width:14mm;background:var(--ac);margin:2mm 0 4mm}
-.c2{background:var(--ac);color:#fff;padding:6mm}.c2 b{font-size:14pt;display:block}
-.c3{display:grid;grid-template-columns:30mm 1fr}.c3 .l{background:var(--ac);color:#fff;padding:6mm 4mm;display:flex;align-items:flex-end;font-size:20pt;font-weight:700}.c3 .rr{padding:6mm 4mm}.c3 b{font-size:12pt;display:block}
-.card div{margin-top:.8mm}
+#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#1f2430;color:#fff;padding:8px 14px;border-radius:8px;display:none;z-index:30;max-width:90vw}
+dialog{border:0;border-radius:12px;padding:16px;max-width:430px;width:92vw}dialog button{margin:3px 0;width:100%;text-align:left}
+#scalerBox,#lbox{margin:0 auto}#scaler,#lscaler{width:794px;transform-origin:top left}
+body[data-view=cv] #lbox{display:none}body[data-view=letter] #scalerBox{display:none}
+.sheet{width:794px;min-height:1123px;background:#fff;color:#1a1a1a;box-shadow:0 2px 14px rgba(0,0,0,.18);position:relative;font-size:calc(12.5px*var(--fs,1));line-height:var(--lh,1.4);padding:calc(40px*var(--pad,1)) calc(44px*var(--pad,1));-webkit-print-color-adjust:exact;print-color-adjust:exact;box-decoration-break:clone;-webkit-box-decoration-break:clone;overflow-wrap:anywhere}
+.sheet h1{margin:0;font-size:2.4em;line-height:1.1}
+.sheet h3{margin:1.1em 0 .45em;font-size:.95em;letter-spacing:.09em;text-transform:uppercase;color:var(--ac);border-bottom:1.5px solid var(--ac);padding-bottom:.25em}
+.sheet .ti{font-size:1.2em;color:#444;margin-top:.2em}.sheet .ct{font-size:.95em;color:#444;margin-top:.45em}
+.sheet .it{margin-bottom:.7em;break-inside:avoid}
+.sheet .r{display:flex;justify-content:space-between;gap:10px}.sheet .r b{font-size:1.05em}.sheet .r i{font-style:normal;color:#555;white-space:nowrap;font-size:.95em}
+.sheet .co{color:#444}.sheet p{margin:0}.sheet ul{margin:.25em 0 0;padding-left:1.4em}.sheet li{margin:.12em 0}
+.sheet img.ph{width:7.7em;height:7.7em;object-fit:cover;flex:none}
+.sh-circle img.ph{border-radius:50%}.sh-round img.ph{border-radius:14px}
+.hd{display:flex;gap:16px;align-items:center}
+.t-classic .hd{border-bottom:3px solid var(--ac);padding-bottom:.7em}
+.t-compact{--pad:.72}.t-compact h1{font-size:2em}.t-compact .it{margin-bottom:.45em}.t-compact .hd{border-bottom:2px solid var(--ac);padding-bottom:.4em}.t-compact img.ph{width:5.6em;height:5.6em}
+.t-executive .hd{flex-direction:column;text-align:center;border-bottom:1px solid #999;padding-bottom:.8em;gap:8px}
+.t-executive h1{letter-spacing:.06em;text-transform:uppercase;font-size:2.1em}.t-executive h3{color:#111;border-color:#bbb;letter-spacing:.16em;text-align:center}
+.t-minimal h3{border:0;margin-top:1.4em}.t-minimal h1{color:var(--ac)}.t-minimal .hd{padding-bottom:.4em}
+.t-banner .hd{margin:calc(-40px*var(--pad,1)) calc(-44px*var(--pad,1)) .6em;padding:1.7em calc(44px*var(--pad,1));background:var(--ac);color:#fff}.t-banner .hd .ti,.t-banner .hd .ct{color:#ffffffd9}
+.t-timeline .hd{border-bottom:3px solid var(--ac);padding-bottom:.7em}
+.t-timeline .s-exp .it,.t-timeline .s-edu .it{border-left:2px solid var(--ac);padding-left:1em;position:relative;margin-left:.4em}
+.t-timeline .s-exp .it::before,.t-timeline .s-edu .it::before{content:'';position:absolute;left:-7px;top:.35em;width:12px;height:12px;border-radius:50%;background:var(--ac)}
+.t-modern,.t-mono{padding:0;display:grid;grid-template-columns:255px 1fr}
+.t-modern{background:linear-gradient(to right,var(--ac) 0 255px,#fff 255px)}
+.t-mono{background:linear-gradient(to right,#f0f2f7 0 255px,#fff 255px)}
+.t-modern aside{color:#fff}.t-modern aside h3{color:#fff;border-color:#ffffff99}
+.t-mono aside h3{color:var(--ac)}
+.sheet aside{padding:2.6em 1.6em;font-size:.97em}.sheet aside div{margin:.25em 0}.sheet aside img.ph{display:block;margin:0 auto 1.2em;width:10em;height:10em}
+.sheet main{padding:2.6em 2.4em 2.6em 2.2em}
+.wm{position:absolute;bottom:10px;right:16px;font-size:10px;color:#aaa}
+.lt h1{font-size:1.9em}.lt .body{white-space:pre-wrap;margin-top:1.6em;font-size:1.05em;line-height:1.6}
+.card{width:90mm;height:54mm;background:#fff;box-shadow:0 1px 8px rgba(0,0,0,.2);position:relative;overflow:hidden;font-size:8.5pt;color:#111;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.card b{display:block}.card div{margin-top:.7mm}
+.c1{padding:6mm}.c1 b{font-size:14pt}.c1 .ln{height:1mm;width:14mm;background:var(--ac);margin:2mm 0 4mm}
+.c2{background:var(--ac);color:#fff;padding:6mm}.c2 b{font-size:14pt}
+.c3{display:grid;grid-template-columns:28mm 1fr}.c3 .l{background:var(--ac);color:#fff;padding:6mm 4mm;display:flex;align-items:flex-end;font-size:20pt;font-weight:700}.c3 .rr{padding:6mm 4mm}.c3 b{font-size:12pt}
+.c4{background:#111827;color:#fff;padding:6mm;border-left:3mm solid var(--ac)}.c4 b{font-size:14pt}.c4 .t{color:#fcd34d}
+.c5{padding:6mm;text-align:center}.c5 b{font-size:14pt;margin-top:3mm}.c5 .ln{height:.6mm;width:20mm;background:var(--ac);margin:2mm auto 3mm}.c5 img{width:16mm;height:16mm;border-radius:50%;object-fit:cover}
+.c6{padding:6mm 6mm 6mm 8mm;background:linear-gradient(135deg,#fff 60%,var(--ac) 60%)}.c6 b{font-size:14pt}.c6 .ct{margin-top:6mm;max-width:52mm}
 #cardPrint{display:none}
-@media(max-width:900px){.layout{display:block;height:auto}.editor{border:0}.preview{padding:8px}}
+#gwrap{max-width:900px;margin:0 auto}#gc{width:100%;max-height:70vh;object-fit:contain;background:#ddd;touch-action:none;border:1px solid var(--bd);border-radius:8px}
+@media(max-width:900px){.layout{display:block;height:auto}.editor{border:0}.preview{padding:8px}header h1{display:none}}
 @media print{
  @page{size:A4;margin:0}
- body{background:#fff}header,.editor,#toast{display:none!important}
+ body{background:#fff}header,.editor,#toast,#pg{display:none!important}
  .layout{display:block;height:auto}.preview{padding:0;overflow:visible}
- #scalerBox{width:auto!important;height:auto!important}#scaler{transform:none!important}.sheet{box-shadow:none}
- body.pc .preview{display:none}body.pc #cardPrint{display:grid;grid-template-columns:90mm 90mm;gap:0;justify-content:center;padding-top:10mm}
- body.pc .card{box-shadow:none;outline:.1mm dashed #bbb}
+ #scalerBox,#lbox{width:auto!important;height:auto!important}#scaler,#lscaler{transform:none!important}.sheet{box-shadow:none}
+ body.pc .preview>*{display:none!important}body.pc #cardPrint{display:grid!important;grid-template-columns:90mm 90mm;justify-content:center;padding-top:10mm}body.pc .card{box-shadow:none;outline:.1mm dashed #bbb}
 }
-</style></head><body>
+</style></head><body data-view="cv">
 <header>
- <h1>📄 ProCV <small style="font-weight:400;color:var(--mut)">ATS Resume • Card</small></h1>
- <button data-act="sample">Sample</button>
- <button data-act="settings">⚙ AI Settings</button>
- <button class="pri" data-act="print">⬇ Download PDF</button>
+ <h1>📄 ProCV</h1>
+ <select id="cvsel" title="My CVs"></select>
+ <button data-act="cvmenu">⋯</button>
+ <button data-act="settings">⚙</button>
+ <button class="pri" data-act="print">⬇ PDF</button>
 </header>
-<div class="layout">
+<div class="layout" id="layout">
 <div class="editor">
- <div class="tabs"><button class="on" data-tab="t1">Details</button><button data-tab="t2">Design</button><button data-tab="t3">ATS + AI</button><button data-tab="t4">Card</button></div>
+ <div class="tabs"><button class="on" data-tab="t1">Details</button><button data-tab="t2">Sections</button><button data-tab="t3">Design</button><button data-tab="t4">ATS</button><button data-tab="t5">AI Tools</button><button data-tab="t6">Cover Letter</button><button data-tab="t7">Card</button><button data-tab="t8">Studio</button></div>
 
  <div class="pane on" id="t1">
-  <div class="note">📥 पुराना CV (PDF/TXT) डालें — AI उसे भरकर बेहतर लिख देगा।</div>
-  <input type="file" id="cvfile" accept=".pdf,.txt,.md">
-  <textarea id="cvpaste" rows="3" placeholder="या CV का text यहाँ paste करें"></textarea>
-  <div class="rowb"><button class="pri" data-act="aiImport">✨ Import & Improve with AI</button></div>
+  <details open><summary>📥 पुराना CV import (PDF / TXT / paste)</summary>
+   <input type="file" id="cvfile" accept=".pdf,.txt,.md" style="margin-top:6px">
+   <textarea id="cvpaste" rows="3" placeholder="या CV का text यहाँ paste करें"></textarea>
+   <div class="rowb"><button class="pri" data-act="aiImport">✨ Import & Improve with AI</button><button data-act="sample">Sample भरें</button></div>
+  </details>
   <h2>Personal</h2>
-  <div class="g2"><div><label>Full name</label><input data-k="name"></div><div><label>Job title</label><input data-k="title"></div>
+  <div class="g2"><div><label>Full name</label><input data-k="name"></div><div><label>Job title / target role</label><input data-k="title"></div>
   <div><label>Email</label><input data-k="email" type="email"></div><div><label>Phone</label><input data-k="phone"></div></div>
-  <label>Location</label><input data-k="location">
+  <div class="g2"><div><label>City, Country</label><input data-k="location"></div><div><label>Total experience (years)</label><input data-k="years" placeholder="खाली = auto"></div></div>
   <label>Links (comma separated: LinkedIn, GitHub, portfolio)</label><input data-k="links">
   <label>Photo</label><input type="file" id="photo" accept="image/*"><div class="rowb"><button data-act="rmphoto">Remove photo</button></div>
+  <details><summary>🇮🇳 More personal details (Indian / Govt format)</summary>
+   <div class="g2"><div><label>Date of birth</label><input data-k="dob" placeholder="12 Aug 1998"></div><div><label>Gender</label><select data-k="gender"><option value=""></option><option>Male</option><option>Female</option><option>Other</option></select></div>
+   <div><label>Marital status</label><input data-k="marital"></div><div><label>Nationality</label><input data-k="nationality"></div></div>
+   <label>Father's name</label><input data-k="father"><label>Address</label><textarea data-k="address" rows="2"></textarea>
+   <label class="ck"><input type="checkbox" data-k="showDecl"> Declaration जोड़ें</label><label>Place (declaration)</label><input data-k="place">
+  </details>
   <label>Summary</label><textarea data-k="summary" rows="4"></textarea>
-  <div class="rowb"><button data-act="aiSummary">✨ Improve summary</button></div>
+  <div class="rowb"><button data-act="aiSummary">✨ AI summary</button><button data-act="localSummary">⚡ Quick draft (offline)</button></div>
   <h2>Experience</h2><div id="expList"></div><button data-act="add" data-l="exp">+ Add experience</button>
   <h2>Education</h2><div id="eduList"></div><button data-act="add" data-l="edu">+ Add education</button>
   <h2>Projects</h2><div id="projects"></div><button data-act="add" data-l="projects">+ Add project</button>
   <h2>Skills</h2><textarea data-k="skills" rows="3" placeholder="Python, SQL, Project Management…"></textarea>
   <label>Languages (comma separated)</label><input data-k="languages">
-  <label>Certifications (one per line)</label><textarea data-k="certs" rows="3"></textarea>
+  <label>Certifications / Licences (one per line)</label><textarea data-k="certs" rows="3"></textarea>
+  <label>Achievements & Awards (one per line)</label><textarea data-k="achievements" rows="3"></textarea>
+  <label>Volunteering / Activities (one per line)</label><textarea data-k="volunteer" rows="2"></textarea>
+  <label>Interests / Hobbies (comma separated)</label><input data-k="hobbies">
+  <label>References</label><textarea data-k="refs" rows="2" placeholder="Name – Designation – Phone"></textarea>
+  <label>Custom section title</label><input data-k="customTitle" placeholder="e.g. Publications"><textarea data-k="customText" rows="3" placeholder="One per line"></textarea>
  </div>
 
  <div class="pane" id="t2">
-  <h2>Template</h2>
-  <div class="tpls"><button data-tpl="classic">Classic<br><small>ATS ✅</small></button><button data-tpl="compact">Compact<br><small>ATS ✅</small></button><button data-tpl="modern">Modern<br><small>2‑col ⚠</small></button></div>
-  <div class="note">ऑनलाइन job portals के लिए Classic/Compact चुनें। Modern मुख्यतः email/HR को सीधे भेजने के लिए।</div>
-  <label>Accent colour</label><input type="color" data-k="accent" style="height:38px">
-  <label>Font (ATS-safe)</label><select data-k="font"><option>Arial</option><option>Calibri, Arial</option><option>Georgia</option><option>Verdana</option><option>Times New Roman</option></select>
-  <label><input type="checkbox" data-k="showPhoto" style="width:auto"> Show photo (India/Gulf में ठीक; US/UK में आमतौर पर नहीं)</label>
+  <h2>मैं कौन हूँ? (एक टैप में सही format)</h2>
+  <select id="ctype"></select><div class="rowb"><button class="pri" data-act="applyType">Apply</button></div><div class="note" id="ctip"></div>
+  <h2>Section order & visibility</h2><div id="secList"></div>
  </div>
 
  <div class="pane" id="t3">
-  <h2>ATS score</h2>
-  <label>Job description (optional – keyword match के लिए)</label><textarea id="jd" rows="5"></textarea>
-  <div class="rowb"><button class="pri" data-act="ats">Check ATS score</button><button data-act="aiTailor">✨ Tailor to this job</button></div>
-  <div id="atsOut"></div>
-  <h2>Career coach (AI)</h2>
-  <textarea id="ask" rows="2" placeholder="जैसे: मेरे CV में क्या कमी है? 3 साल के experience में salary कैसे negotiate करूँ?"></textarea>
-  <div class="rowb"><button data-act="aiAsk">Ask</button></div><div id="askOut"></div>
+  <h2>Template</h2><div class="tpls" id="tplGrid"></div>
+  <div class="note">ऑनलाइन portals के लिए Classic / Compact / Minimal / Executive / Timeline चुनें (single column = ATS-safe)। Modern/Slate (2-column) सीधे HR/email के लिए।</div>
+  <label>Accent colour</label><input type="color" data-k="accent"><div class="sw" id="sw"></div>
+  <div class="g2"><div><label>Font</label><select data-k="font"><option>Arial</option><option>Calibri, Arial</option><option>Georgia</option><option>Verdana</option><option>Times New Roman</option><option>Trebuchet MS</option><option>Tahoma</option></select></div>
+  <div><label>Photo shape</label><select data-k="shape"><option value="circle">Circle</option><option value="round">Rounded</option><option value="square">Square</option></select></div></div>
+  <label>Text size</label><input type="range" data-k="fs" min=".8" max="1.2" step=".02">
+  <label>Line spacing</label><input type="range" data-k="lh" min="1.2" max="1.7" step=".05">
+  <label>Margins</label><input type="range" data-k="pad" min=".6" max="1.3" step=".05">
+  <label class="ck"><input type="checkbox" data-k="showPhoto"> Show photo (India/Gulf में ठीक; US/UK में आमतौर पर नहीं)</label>
+  <div class="rowb"><button data-act="fit1">📏 Fit to 1 page</button></div>
  </div>
 
  <div class="pane" id="t4">
-  <div class="note">Name/title/phone/email Details टैब से आते हैं।</div>
-  <label>Style</label><select id="cstyle"><option value="c1">Minimal</option><option value="c2">Bold colour</option><option value="c3">Split</option></select>
+  <label>Job description (optional – keyword match के लिए)</label><textarea id="jd" rows="5"></textarea>
+  <div class="rowb"><button class="pri" data-act="ats">Check ATS score</button></div>
+  <div id="atsOut"></div>
+ </div>
+
+ <div class="pane" id="t5">
+  <div class="note">AI tools के लिए ⚙ में API key डालें। Target role/job ATS टैब के Job description से भी लिया जाता है।</div>
+  <label>Target role / company (optional)</label><input id="tgt" placeholder="Data Analyst @ Infosys">
+  <div class="rowb"><button data-act="aiTailor">🎯 Tailor CV to job</button><button data-act="aiTool" data-w="linkedin">LinkedIn headline + About</button><button data-act="aiTool" data-w="interview">Interview Q&A</button><button data-act="aiTool" data-w="gap">Skill gap + 30-day plan</button><button data-act="aiTool" data-w="salary">Salary negotiation</button><button data-act="aiTool" data-w="msg">Recruiter message / email</button></div>
+  <div id="aiOut"></div>
+  <h2>Career coach</h2><textarea id="ask" rows="2" placeholder="जैसे: मेरे CV में क्या कमी है?"></textarea>
+  <div class="rowb"><button data-act="aiAsk">Ask</button></div><div id="askOut"></div>
+ </div>
+
+ <div class="pane" id="t6">
+  <div class="g2"><div><label>Company</label><input data-c="company"></div><div><label>Role</label><input data-c="role"></div></div>
+  <label>Hiring manager (optional)</label><input data-c="manager"><label>कुछ खास बात जोड़नी हो (optional)</label><textarea data-c="notes" rows="2"></textarea>
+  <div class="rowb"><button class="pri" data-act="clAI">✨ Generate with AI</button><button data-act="clLocal">⚡ Template (offline)</button><button data-act="printLetter">⬇ Letter PDF</button></div>
+  <label>Letter text (edit कर सकते हैं)</label><textarea id="cltext" rows="14"></textarea>
+ </div>
+
+ <div class="pane" id="t7">
+  <label>Style</label><select id="cstyle"><option value="c1">Minimal</option><option value="c2">Bold colour</option><option value="c3">Split</option><option value="c4">Dark</option><option value="c5">Centered</option><option value="c6">Corner</option></select>
   <div style="margin:14px 0" id="cardPrev"></div>
-  <div class="rowb"><button class="pri" data-act="printCard">Print (10 cards on A4 / PDF)</button></div>
+  <div class="rowb"><button class="pri" data-act="printCard">Print (10 cards on A4)</button><button data-act="cardStudio">PNG / Studio में edit</button></div>
+ </div>
+
+ <div class="pane" id="t8">
+  <div id="gwrap">
+   <div class="rowb" id="stpls"></div>
+   <div class="g2"><div><label>Canvas size</label><select id="gsize"><option value="1080x1080">Instagram post 1080²</option><option value="1080x1920">Story 1080×1920</option><option value="1584x396">LinkedIn banner</option><option value="1240x1754">A4 poster</option><option value="1050x600">Visiting card</option><option value="1280x720">YouTube thumb</option></select></div>
+   <div><label>Background</label><div class="g2"><input type="color" id="gc1" value="#4f46e5"><input type="color" id="gc2" value="#7c3aed"></div></div></div>
+   <label class="ck"><input type="checkbox" id="ggrad" checked> Gradient</label>
+   <canvas id="gc" width="1080" height="1080"></canvas>
+   <div class="rowb"><button data-act="gText">+ Text</button><button data-act="gRect">+ Shape</button><label style="margin:0"><span class="note">+ Image</span><input type="file" id="gimg" accept="image/*"></label><button class="dng" data-act="gDel">Delete</button><button data-act="gFront">Bring front</button><button class="pri" data-act="gExport">⬇ PNG</button></div>
+   <div id="gprops" style="display:none">
+    <label>Text</label><textarea id="gtext" rows="2"></textarea>
+    <div class="g2"><div><label>Size / width</label><input type="range" id="gw" min="10" max="1600"></div><div><label>Height (shape)</label><input type="range" id="gh" min="4" max="1800"></div>
+    <div><label>Colour</label><input type="color" id="gcol"></div><div><label>Align</label><select id="galign"><option>left</option><option>center</option><option>right</option></select></div></div>
+    <label class="ck"><input type="checkbox" id="gbold"> Bold</label>
+   </div>
+   <div class="note">Layer पर टैप करके खींचें। Template बदलने पर आपका नाम/title अपने आप भर जाता है।</div>
+  </div>
  </div>
 </div>
-<div class="preview" id="preview"><div id="scalerBox"><div id="scaler"><div class="sheet" id="sheet"></div></div></div><div id="cardPrint"></div></div>
+<div class="preview" id="preview"><span id="pg"></span>
+ <div id="scalerBox"><div id="scaler"><div class="sheet" id="sheet"></div></div></div>
+ <div id="lbox"><div id="lscaler"><div class="sheet lt" id="letter"></div></div></div>
+ <div id="cardPrint"></div>
+</div>
 </div>
 
 <dialog id="dlg"><h2 style="margin-top:0">AI Settings</h2>
  <label>Provider</label><select id="prov"><option value="gemini">Google Gemini</option><option value="claude">Anthropic Claude</option></select>
  <label>API key (सिर्फ़ आपके device में रहती है)</label><input id="key" type="password">
  <label>Model</label><input id="model">
- <div class="note">Play Store पर बेचने के लिए key ऐप में नहीं, अपने backend proxy में रखें (README देखें)।</div>
- <div class="rowb"><button class="pri" data-act="saveCfg">Save</button><button data-act="closeCfg">Close</button></div>
-</dialog>
+ <div class="note">Play Store पर बेचते समय key ऐप में नहीं, अपने backend proxy में रखें (README)।</div>
+ <button class="pri" data-act="saveCfg">Save</button><button data-act="closeDlg">Close</button></dialog>
+<dialog id="cvdlg"><h2 style="margin-top:0">My CVs & Export</h2>
+ <button data-act="cvNew">➕ New CV</button><button data-act="cvDup">⧉ Duplicate</button><button data-act="cvRen">✏ Rename</button><button class="dng" data-act="cvDel">🗑 Delete this CV</button>
+ <hr><button data-act="exTxt">📄 Export plain text (ATS)</button><button data-act="exDoc">📝 Export Word (.doc)</button><button data-act="exJson">💾 Backup (JSON)</button>
+ <label>Restore backup (JSON)</label><input type="file" id="jsonfile" accept=".json"><button data-act="closeDlg">Close</button></dialog>
+<dialog id="paydlg"><h2 style="margin-top:0">⭐ ProCV Pro</h2><p>सभी templates, बिना watermark, unlimited AI।</p><button class="pri" data-act="unlock">Unlock (demo)</button><button data-act="closeDlg">Later</button></dialog>
 <div id="toast"></div>
 
 <script>
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const KEY='procv.v1',CK='procv.cfg';
-const blank={name:'',title:'',email:'',phone:'',location:'',links:'',summary:'',photo:'',skills:'',languages:'',certs:'',exp:[],edu:[],projects:[],tpl:'classic',accent:'#4f46e5',showPhoto:false,font:'Arial'};
-let S;try{S={...blank,...JSON.parse(localStorage.getItem(KEY)||'{}')}}catch{S={...blank}}
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch{toast('Storage full – photo छोटा करें')}};
+const CK='procv.cfg',MONETIZE=false,FREE_TPL=['classic','compact','minimal'];
+const isPro=()=>!MONETIZE||localStorage.getItem('procv.pro')==='1';
+const native=()=>!!(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform());
+const ALL=['summary','skills','exp','projects','edu','certs','achievements','volunteer','languages','hobbies','personal','refs','declaration','custom'];
+const blank={name:'',title:'',email:'',phone:'',location:'',years:'',links:'',summary:'',photo:'',skills:'',languages:'',certs:'',achievements:'',volunteer:'',hobbies:'',refs:'',customTitle:'',customText:'',dob:'',gender:'',marital:'',nationality:'',father:'',address:'',place:'',showDecl:false,
+ exp:[],edu:[],projects:[],tpl:'classic',accent:'#4f46e5',showPhoto:false,font:'Arial',shape:'circle',fs:1,lh:1.4,pad:1,order:ALL.slice(),hidden:{},labels:{},cl:{company:'',role:'',manager:'',notes:'',text:''}};
+const norm=d=>{const x={...blank,...d,cl:{...blank.cl,...(d&&d.cl)}};x.order=[...(x.order||[]).filter(k=>ALL.includes(k)),...ALL.filter(k=>!(x.order||[]).includes(k))];x.hidden=x.hidden||{};x.labels=x.labels||{};return x};
+function loadDB(){try{const d=JSON.parse(localStorage.getItem('procv.db'));if(d&&d.list&&d.list[d.cur])return d}catch{}
+ let old={};try{old=JSON.parse(localStorage.getItem('procv.v1')||'{}')}catch{}
+ const id='cv'+Date.now();return{cur:id,list:{[id]:{name:'My CV',data:old}}}}
+let DB=loadDB(),S=norm(DB.list[DB.cur].data);
+const save=()=>{DB.list[DB.cur].data=S;try{localStorage.setItem('procv.db',JSON.stringify(DB))}catch{toast('Storage full – photo छोटा करें')}};
 function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>t.style.display='none',3500)}
 const lines=t=>String(t||'').split('\n').map(x=>x.trim().replace(/^[-•*]\s*/,'')).filter(Boolean);
 const csv=t=>String(t||'').split(/[,\n]/).map(x=>x.trim()).filter(Boolean);
 const ul=t=>{const l=lines(t);return l.length?`<ul>${l.map(b=>`<li>${esc(b)}</li>`).join('')}</ul>`:''};
+function estimateYears(){const ys=[];S.exp.forEach(e=>{const a=(e.start||'').match(/(19|20)\d\d/),b=/present|current|now|till/i.test(e.end||'')?[new Date().getFullYear()]:(e.end||'').match(/(19|20)\d\d/);if(a)ys.push(+a[0]);if(b)ys.push(+b[0])});return ys.length>1?Math.max(...ys)-Math.min(...ys):0}
+const yrs=()=>S.years||estimateYears()||'';
 
-/* ---------- resume rendering ---------- */
+/* ---------- section bodies ---------- */
+const LABEL={summary:'Professional Summary',skills:'Skills',exp:'Work Experience',edu:'Education',projects:'Projects',certs:'Certifications',achievements:'Achievements & Awards',volunteer:'Volunteering & Activities',languages:'Languages',hobbies:'Interests',personal:'Personal Details',refs:'References',declaration:'Declaration',custom:'Additional'};
+const label=k=>k==='custom'?(S.customTitle||LABEL.custom):(S.labels&&S.labels[k])||LABEL[k];
+const SIDE=['skills','languages','certs','hobbies','personal'];
+const DECL='I hereby declare that the information furnished above is true and correct to the best of my knowledge and belief.';
+function body(k,side){
+ const s=S,divs=a=>a.map(x=>`<div>${side==='skills'?'• ':''}${esc(x)}</div>`).join('');
+ switch(k){
+  case 'summary':return s.summary?`<p>${esc(s.summary)}</p>`:'';
+  case 'skills':{const a=csv(s.skills);return !a.length?'':side?a.map(x=>`<div>• ${esc(x)}</div>`).join(''):`<p>${a.map(esc).join(' • ')}</p>`}
+  case 'exp':return s.exp.filter(e=>e.role||e.company).map(e=>`<div class="it"><div class="r"><b>${esc(e.role)}</b><i>${esc([e.start,e.end].filter(Boolean).join(' – '))}</i></div><div class="co">${esc([e.company,e.loc].filter(Boolean).join(', '))}</div>${ul(e.bullets)}</div>`).join('');
+  case 'edu':return s.edu.filter(e=>e.degree||e.school).map(e=>`<div class="it"><div class="r"><b>${esc(e.degree)}</b><i>${esc(e.year)}</i></div><div class="co">${esc([e.school,e.score].filter(Boolean).join(' · '))}</div></div>`).join('');
+  case 'projects':return s.projects.filter(p=>p.name).map(p=>`<div class="it"><div class="r"><b>${esc(p.name)}</b><i>${esc(p.link)}</i></div>${ul(p.desc)}</div>`).join('');
+  case 'certs':{const a=lines(s.certs);return !a.length?'':side?a.map(x=>`<div>${esc(x)}</div>`).join(''):ul(s.certs)}
+  case 'languages':{const a=csv(s.languages);return !a.length?'':side?divs(a):`<p>${a.map(esc).join(', ')}</p>`}
+  case 'hobbies':{const a=csv(s.hobbies);return !a.length?'':side?divs(a):`<p>${a.map(esc).join(', ')}</p>`}
+  case 'personal':return [['Date of Birth',s.dob],['Gender',s.gender],['Marital Status',s.marital],['Nationality',s.nationality],["Father's Name",s.father],['Address',s.address]].filter(r=>r[1]).map(r=>`<div><b>${r[0]}:</b> ${esc(r[1])}</div>`).join('');
+  case 'achievements':case 'volunteer':return ul(s[k]);
+  case 'refs':return s.refs?`<p style="white-space:pre-line">${esc(s.refs)}</p>`:'';
+  case 'declaration':return s.showDecl?`<p>${esc(DECL)}</p><div class="r" style="margin-top:.8em"><span>Place: ${esc(s.place||s.location)}<br>Date: ${new Date().toLocaleDateString('en-GB')}</span><b>${esc(s.name)}</b></div>`:'';
+  case 'custom':return ul(s.customText);
+ }return ''}
 function build(){
- const s=S,sec=(t,h)=>h?`<section><h3>${t}</h3>${h}</section>`:'';
- const exp=s.exp.filter(e=>e.role||e.company).map(e=>`<div class="it"><div class="r"><b>${esc(e.role)}</b><i>${esc([e.start,e.end].filter(Boolean).join(' – '))}</i></div><div class="co">${esc([e.company,e.loc].filter(Boolean).join(', '))}</div>${ul(e.bullets)}</div>`).join('');
- const edu=s.edu.filter(e=>e.degree||e.school).map(e=>`<div class="it"><div class="r"><b>${esc(e.degree)}</b><i>${esc(e.year)}</i></div><div class="co">${esc([e.school,e.score].filter(Boolean).join(' · '))}</div></div>`).join('');
- const pr=s.projects.filter(p=>p.name).map(p=>`<div class="it"><div class="r"><b>${esc(p.name)}</b><i>${esc(p.link)}</i></div>${ul(p.desc)}</div>`).join('');
+ const s=S,tp=s.tpl,sd=tp==='modern'||tp==='mono';
  const photo=s.showPhoto&&s.photo?`<img class="ph" src="${s.photo}" alt="">`:'';
  const contact=[s.email,s.phone,s.location,...csv(s.links)].filter(Boolean);
- const skills=csv(s.skills),langs=csv(s.languages),certs=lines(s.certs);
- if(s.tpl==='modern'){
-  const side=(t,h)=>h?`<h3>${t}</h3>${h}`:'';
-  return `<aside>${photo}${side('Contact',contact.map(c=>`<div>${esc(c)}</div>`).join(''))}${side('Skills',skills.map(c=>`<div>• ${esc(c)}</div>`).join(''))}${side('Languages',langs.map(c=>`<div>${esc(c)}</div>`).join(''))}${side('Certifications',certs.map(c=>`<div>${esc(c)}</div>`).join(''))}</aside>
-  <main><h1>${esc(s.name||'Your Name')}</h1><div class="ti">${esc(s.title)}</div>${sec('Summary',s.summary&&`<p>${esc(s.summary)}</p>`)}${sec('Experience',exp)}${sec('Projects',pr)}${sec('Education',edu)}</main>`;
- }
- return `<div class="hd">${photo}<div><h1>${esc(s.name||'Your Name')}</h1><div class="ti">${esc(s.title)}</div><div class="ct">${contact.map(esc).join(' &nbsp;|&nbsp; ')}</div></div></div>
- ${sec('Summary',s.summary&&`<p>${esc(s.summary)}</p>`)}${sec('Skills',skills.length&&`<p>${skills.map(esc).join(' • ')}</p>`)}${sec('Experience',exp)}${sec('Projects',pr)}${sec('Education',edu)}${sec('Certifications',certs.length&&ul(s.certs))}${sec('Languages',langs.length&&`<p>${langs.map(esc).join(', ')}</p>`)}`;
+ const vis=s.order.filter(k=>!s.hidden[k]);
+ const sec=(k,side)=>{const h=body(k,side);return h?`<section class="s-${k}"><h3>${esc(label(k))}</h3>${h}</section>`:''};
+ if(sd){const L=vis.filter(k=>SIDE.includes(k)),M=vis.filter(k=>!SIDE.includes(k));
+  return `<aside>${photo}<section><h3>Contact</h3>${contact.map(c=>`<div>${esc(c)}</div>`).join('')}</section>${L.map(k=>sec(k,true)).join('')}</aside><main><h1>${esc(s.name||'Your Name')}</h1><div class="ti">${esc(s.title)}</div>${M.map(k=>sec(k)).join('')}</main>`}
+ return `<div class="hd">${photo}<div><h1>${esc(s.name||'Your Name')}</h1><div class="ti">${esc(s.title)}</div><div class="ct">${contact.map(esc).join(' &nbsp;|&nbsp; ')}</div></div></div>`+vis.map(k=>sec(k)).join('');
 }
 function render(){
- const sh=$('#sheet');sh.className='sheet t-'+S.tpl;sh.style.setProperty('--ac',S.accent);document.documentElement.style.setProperty('--ac',S.accent);
- sh.style.fontFamily=S.font;sh.innerHTML=build();
+ const sh=$('#sheet');sh.className=`sheet t-${S.tpl} sh-${S.shape||'circle'}`;
+ sh.style.cssText=`--ac:${S.accent};--fs:${S.fs};--lh:${S.lh};--pad:${S.pad};font-family:${S.font}`;
+ sh.innerHTML=build()+(isPro()?'':'<div class="wm">Made with ProCV</div>');
+ const L=$('#letter');L.style.cssText=sh.style.cssText;
+ L.innerHTML=`<h1 style="color:var(--ac)">${esc(S.name)}</h1><div class="ct">${[S.email,S.phone,S.location].filter(Boolean).map(esc).join(' | ')}</div><div style="margin-top:1.4em">${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}</div><div class="body">${esc(S.cl.text)}</div>`;
+ document.documentElement.style.setProperty('--ac',S.accent);
  $$('[data-tpl]').forEach(b=>b.classList.toggle('on',b.dataset.tpl===S.tpl));
- fit();renderCard();
+ fit();renderCard();secUI();
 }
 function fit(){
- const p=$('#preview'),k=Math.min(1,(p.clientWidth-(innerWidth<900?16:32))/794),sc=$('#scaler'),bx=$('#scalerBox');
- sc.style.transform=`scale(${k})`;bx.style.width=794*k+'px';bx.style.height=sc.offsetHeight*k+'px';
+ const p=$('#preview'),k=Math.min(1,(p.clientWidth-(innerWidth<900?16:32))/794);
+ [['#scaler','#scalerBox'],['#lscaler','#lbox']].forEach(([a,b])=>{const sc=$(a),bx=$(b);sc.style.transform=`scale(${k})`;bx.style.width=794*k+'px';bx.style.height=sc.offsetHeight*k+'px'});
+ const pg=$('#sheet').offsetHeight/1123;$('#pg').textContent=`≈ ${Math.max(1,Math.round(pg*10)/10)} page${pg>1.05?'s':''}`;$('#pg').style.background=pg>2.05?'#dc2626':'#1f2430';
 }
 addEventListener('resize',fit);
 let rt;const later=()=>{clearTimeout(rt);rt=setTimeout(()=>{save();render()},120)};
 
+/* ---------- templates, presets, sections ---------- */
+const TPLS=[['classic','Classic','✅'],['compact','Compact','✅'],['minimal','Minimal','✅'],['executive','Executive','✅'],['timeline','Timeline','✅'],['banner','Banner','✅'],['modern','Modern','2-col'],['mono','Slate','2-col']];
+$('#tplGrid').innerHTML=TPLS.map(t=>`<button data-tpl="${t[0]}">${t[1]}<br><small>${t[2]}</small></button>`).join('');
+$('#sw').innerHTML=['#4f46e5','#0f766e','#b91c1c','#1d4ed8','#9333ea','#c2410c','#111827','#0e7490'].map(c=>`<i data-sw="${c}" style="background:${c}"></i>`).join('');
+const ord=first=>[...first,...ALL.filter(k=>!first.includes(k))];
+const TYPES={
+ exp:{n:'Experienced professional',tpl:'classic',order:ord(['summary','skills','exp','projects','edu','certs','achievements']),labels:{},tip:'Summary में years + top skills; हर job में numbers वाले 3–5 bullets; 2 pages तक ठीक।'},
+ fresher:{n:'Fresher / Student',tpl:'classic',order:ord(['summary','edu','projects','skills','exp','certs','achievements','volunteer']),labels:{exp:'Internships & Experience'},tip:'Education पहले; projects में tools + result; 1 page; achievements/clubs जोड़ें।'},
+ tech:{n:'IT / Developer',tpl:'minimal',order:ord(['summary','skills','exp','projects','edu','certs','achievements']),labels:{skills:'Technical Skills'},tip:'Tech-stack keywords, GitHub link, projects में scale/impact (users, latency, %)।'},
+ sales:{n:'Sales / Marketing / BD',tpl:'banner',order:ord(['summary','exp','achievements','skills','edu','certs']),labels:{achievements:'Key Achievements'},tip:'Targets, revenue, growth %, clients; achievements ऊपर रखें।'},
+ health:{n:'Healthcare / Nursing',tpl:'executive',order:ord(['summary','edu','certs','exp','skills','achievements']),labels:{certs:'Licences & Registrations'},tip:'Licence/registration no., specialisation, patient load, departments।'},
+ teacher:{n:'Teacher / Academic',tpl:'executive',order:ord(['summary','edu','exp','achievements','certs','skills']),labels:{exp:'Teaching Experience',achievements:'Publications & Awards'},tip:'Subjects, classes, board results, B.Ed/NET/CTET, publications।'},
+ blue:{n:'Skilled worker (driver, electrician, factory, delivery)',tpl:'compact',order:ord(['summary','exp','skills','certs','languages','personal','declaration']),labels:{certs:'Licences & Certificates',skills:'Skills & Trades'},showDecl:true,tip:'सीधा 1 page; DL/ITI licence, shift/overtime, languages, बड़ा phone number।'},
+ govt:{n:'Govt job / Indian form format',tpl:'classic',order:ord(['personal','edu','exp','skills','certs','achievements','languages','hobbies','declaration']),labels:{},showDecl:true,tip:'DOB, पिता का नाम, category, पता और Declaration — Indian form जैसा।'},
+};
+$('#ctype').innerHTML=Object.entries(TYPES).map(([k,v])=>`<option value="${k}">${v.n}</option>`).join('');
+const showTip=()=>$('#ctip').textContent='💡 '+TYPES[$('#ctype').value].tip;$('#ctype').onchange=showTip;showTip();
+function secUI(){$('#secList').innerHTML=S.order.map((k,i)=>`<div class="srow"><span>${esc(label(k))}</span><span><button data-act="mv" data-i="${i}" data-d="-1">▲</button> <button data-act="mv" data-i="${i}" data-d="1">▼</button> <button data-act="hid" data-sk="${k}">${S.hidden[k]?'🙈':'👁'}</button></span></div>`).join('')}
+
 /* ---------- card ---------- */
 function cardHTML(st){
  const c=[S.phone,S.email,csv(S.links)[0],S.location].filter(Boolean).map(x=>`<div>${esc(x)}</div>`).join('');
- const n=esc(S.name||'Your Name'),t=esc(S.title||'Job title');
- if(st==='c3')return `<div class="card c3"><div class="l">${esc((S.name||'YN').split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase())}</div><div class="rr"><b>${n}</b><div>${t}</div><div style="margin-top:4mm"></div>${c}</div></div>`;
- if(st==='c2')return `<div class="card c2"><b>${n}</b><div>${t}</div><div style="margin-top:8mm"></div>${c}</div>`;
- return `<div class="card c1"><b>${n}</b><div>${t}</div><div class="ln"></div>${c}</div>`;
+ const n=esc(S.name||'Your Name'),t=esc(S.title||'Job title'),ini=esc((S.name||'YN').split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase());
+ const img=S.photo?`<img src="${S.photo}" alt="">`:'';
+ return {c1:`<div class="card c1"><b>${n}</b><div>${t}</div><div class="ln"></div>${c}</div>`,
+  c2:`<div class="card c2"><b>${n}</b><div>${t}</div><div style="margin-top:8mm"></div>${c}</div>`,
+  c3:`<div class="card c3"><div class="l">${ini}</div><div class="rr"><b>${n}</b><div>${t}</div><div style="margin-top:4mm"></div>${c}</div></div>`,
+  c4:`<div class="card c4"><b>${n}</b><div class="t">${t}</div><div style="margin-top:7mm"></div>${c}</div>`,
+  c5:`<div class="card c5">${img}<b>${n}</b><div>${t}</div><div class="ln"></div>${c}</div>`,
+  c6:`<div class="card c6"><b>${n}</b><div>${t}</div><div class="ct">${c}</div></div>`}[st];
 }
-function renderCard(){const st=$('#cstyle').value,h=cardHTML(st);$('#cardPrev').innerHTML=h;$('#cardPrint').innerHTML=Array(10).fill(h).join('')}
+function renderCard(){const h=cardHTML($('#cstyle').value);$('#cardPrev').innerHTML=h;$('#cardPrint').innerHTML=Array(10).fill(h).join('')}
 $('#cstyle').onchange=renderCard;
 
 /* ---------- forms ---------- */
 const inp=(l,i,f,ph,v)=>`<input data-l="${l}" data-i="${i}" data-f="${f}" placeholder="${ph}" value="${esc(v)}">`;
 const del=(l,i)=>`<button class="dng" data-act="del" data-l="${l}" data-i="${i}">Delete</button>`;
 function lists(){
- $('#expList').innerHTML=S.exp.map((e,i)=>`<div class="ci"><div class="g2">${inp('exp',i,'role','Job title',e.role)}${inp('exp',i,'company','Company',e.company)}${inp('exp',i,'start','Start (Jan 2021)',e.start)}${inp('exp',i,'end','End / Present',e.end)}</div>${inp('exp',i,'loc','Location',e.loc)}<textarea data-l="exp" data-i="${i}" data-f="bullets" rows="4" placeholder="One achievement per line">${esc(e.bullets)}</textarea><div class="rowb"><button data-act="aiBul" data-i="${i}">✨ Improve bullets</button>${del('exp',i)}</div></div>`).join('');
+ $('#expList').innerHTML=S.exp.map((e,i)=>`<div class="ci"><div class="g2">${inp('exp',i,'role','Job title',e.role)}${inp('exp',i,'company','Company',e.company)}${inp('exp',i,'start','Start (Jan 2021)',e.start)}${inp('exp',i,'end','End / Present',e.end)}</div>${inp('exp',i,'loc','Location',e.loc)}<textarea data-l="exp" data-i="${i}" data-f="bullets" rows="4" placeholder="One achievement per line (Action verb + task + result)">${esc(e.bullets)}</textarea><div class="rowb"><button data-act="aiBul" data-i="${i}">✨ Improve bullets</button>${del('exp',i)}</div></div>`).join('');
  $('#eduList').innerHTML=S.edu.map((e,i)=>`<div class="ci"><div class="g2">${inp('edu',i,'degree','Degree',e.degree)}${inp('edu',i,'school','School / University',e.school)}${inp('edu',i,'year','Year',e.year)}${inp('edu',i,'score','CGPA / %',e.score)}</div><div class="rowb">${del('edu',i)}</div></div>`).join('');
  $('#projects').innerHTML=S.projects.map((e,i)=>`<div class="ci">${inp('projects',i,'name','Project name',e.name)}${inp('projects',i,'link','Link / tech',e.link)}<textarea data-l="projects" data-i="${i}" data-f="desc" rows="3" placeholder="One point per line">${esc(e.desc)}</textarea><div class="rowb">${del('projects',i)}</div></div>`).join('');
 }
-function fill(){$$('[data-k]').forEach(el=>{const v=S[el.dataset.k];el.type==='checkbox'?el.checked=!!v:el.value=v??''});lists();render()}
+function fill(){
+ $$('[data-k]').forEach(el=>{const v=S[el.dataset.k];el.type==='checkbox'?el.checked=!!v:el.value=v??''});
+ $$('[data-c]').forEach(el=>el.value=S.cl[el.dataset.c]||'');$('#cltext').value=S.cl.text||'';
+ const sel=$('#cvsel');sel.innerHTML=Object.entries(DB.list).map(([id,v])=>`<option value="${id}" ${id===DB.cur?'selected':''}>${esc(v.name)}</option>`).join('');
+ lists();render();
+}
 document.addEventListener('input',e=>{
  const el=e.target;
- if(el.dataset.k){S[el.dataset.k]=el.type==='checkbox'?el.checked:el.value;later()}
+ if(el.dataset.k){S[el.dataset.k]=el.type==='checkbox'?el.checked:el.type==='range'?+el.value:el.value;later()}
  else if(el.dataset.l){S[el.dataset.l][+el.dataset.i][el.dataset.f]=el.value;later()}
+ else if(el.dataset.c){S.cl[el.dataset.c]=el.value;later()}
+ else if(el.id==='cltext'){S.cl.text=el.value;later()}
 });
 document.addEventListener('change',e=>{if(e.target.type==='checkbox'&&e.target.dataset.k){S[e.target.dataset.k]=e.target.checked;later()}});
-$$('[data-tab]').forEach(b=>b.onclick=()=>{$$('[data-tab]').forEach(x=>x.classList.toggle('on',x===b));$$('.pane').forEach(p=>p.classList.toggle('on',p.id===b.dataset.tab));if(b.dataset.tab==='t4')renderCard()});
-$$('[data-tpl]').forEach(b=>b.onclick=()=>{S.tpl=b.dataset.tpl;save();render()});
+$('#cvsel').onchange=e=>{DB.cur=e.target.value;S=norm(DB.list[DB.cur].data);save();fill()};
+$$('[data-tab]').forEach(b=>b.onclick=()=>{
+ $$('[data-tab]').forEach(x=>x.classList.toggle('on',x===b));$$('.pane').forEach(p=>p.classList.toggle('on',p.id===b.dataset.tab));
+ document.body.dataset.view=b.dataset.tab==='t6'?'letter':'cv';$('#layout').classList.toggle('studio',b.dataset.tab==='t8');
+ if(b.dataset.tab==='t8')initStudio();fit();if(b.dataset.tab==='t7')renderCard()});
+document.addEventListener('click',e=>{
+ const t=e.target.closest('[data-tpl]');if(t){if(!isPro()&&!FREE_TPL.includes(t.dataset.tpl))return $('#paydlg').showModal();S.tpl=t.dataset.tpl;save();render();return}
+ const w=e.target.closest('[data-sw]');if(w){S.accent=w.dataset.sw;$('[data-k=accent]').value=S.accent;save();render();return}
+ const b=e.target.closest('[data-act]');if(b&&acts[b.dataset.act])acts[b.dataset.act](b)});
 $('#photo').onchange=e=>{
  const f=e.target.files[0];if(!f)return;const im=new Image();im.onload=()=>{
   const c=document.createElement('canvas');c.width=c.height=320;const x=c.getContext('2d'),m=Math.min(im.width,im.height);
   x.drawImage(im,(im.width-m)/2,(im.height-m)/2,m,m,0,0,320,320);S.photo=c.toDataURL('image/jpeg',.85);S.showPhoto=true;fill();save();URL.revokeObjectURL(im.src)};
  im.src=URL.createObjectURL(f)};
 
+/* ---------- files / export ---------- */
+async function saveBlob(name,blob){
+ if(native()){const P=Capacitor.Plugins;
+  const data=await new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result.split(',')[1]);f.readAsDataURL(blob)});
+  const w=await P.Filesystem.writeFile({path:name,data,directory:'CACHE'});await P.Share.share({title:name,url:w.uri,dialogTitle:'Save / Share '+name});
+ }else{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
+}
+const fname=()=>(S.name||'CV').replace(/[^\w]+/g,'_');
+const loadJs=src=>new Promise((ok,no)=>{if(document.querySelector(`script[src="${src}"]`))return ok();const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=()=>no(new Error('Library load नहीं हुई'));document.head.appendChild(s)});
+async function makePdf(el){
+ await loadJs('lib/html2canvas.min.js');await loadJs('lib/jspdf.umd.min.js');
+ const host=document.createElement('div');host.style.cssText='position:fixed;left:-10000px;top:0;width:794px';const c=el.cloneNode(true);c.style.boxShadow='none';host.appendChild(c);document.body.appendChild(host);
+ const cv=await html2canvas(c,{scale:2,backgroundColor:'#fff',width:794,windowWidth:794});host.remove();
+ const pdf=new jspdf.jsPDF({unit:'pt',format:'a4'}),pw=595.28,ph=841.89,k=pw/cv.width,pageH=ph/k;
+ for(let y=0,p=0;y<cv.height-2;y+=pageH,p++){const h=Math.min(pageH,cv.height-y),sl=document.createElement('canvas');sl.width=cv.width;sl.height=h;const x=sl.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,sl.width,h);x.drawImage(cv,0,y,cv.width,h,0,0,cv.width,h);if(p)pdf.addPage();pdf.addImage(sl.toDataURL('image/jpeg',.95),'JPEG',0,0,pw,h*k)}
+ return pdf;
+}
+async function pdfOut(el,name){if(!native()){document.body.classList.remove('pc');return print()}toast('PDF बन रहा है…');const p=await makePdf(el);await saveBlob(name,p.output('blob'))}
+const dec=x=>{const t=document.createElement('textarea');t.innerHTML=x;return t.value};
+function txtCV(){const out=[S.name,[S.title,S.email,S.phone,S.location,...csv(S.links)].filter(Boolean).join(' | '),''];
+ S.order.filter(k=>!S.hidden[k]).forEach(k=>{const b=body(k,false);if(b)out.push(label(k).toUpperCase(),dec(b.replace(/<\/(div|p|li)>/g,'\n').replace(/<li>/g,'- ').replace(/<br>/g,'\n').replace(/<[^>]+>/g,'')).replace(/\n{3,}/g,'\n\n').trim(),'')});return out.join('\n')}
+function docHTML(){let h=`<h1>${esc(S.name)}</h1><p>${esc([S.title,S.email,S.phone,S.location,...csv(S.links)].filter(Boolean).join(' | '))}</p>`;
+ S.order.filter(k=>!S.hidden[k]).forEach(k=>{const b=body(k,false);if(b)h+=`<h2>${esc(label(k))}</h2>`+b});
+ return `<html xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><style>body{font-family:${S.font};font-size:11pt}h1{font-size:20pt;margin:0}h2{font-size:12pt;border-bottom:1px solid #999;text-transform:uppercase}i{font-style:normal;color:#555;margin-left:8px}</style></head><body>${h}</body></html>`}
+
 /* ---------- actions ---------- */
 const SAMPLE={name:'Rahul Sharma',title:'Senior Software Engineer',email:'rahul.sharma@example.com',phone:'+91 98765 43210',location:'Bengaluru, India',links:'linkedin.com/in/rahulsharma, github.com/rahulsharma',
  summary:'Software engineer with 6+ years building scalable web platforms. Led a team of 5 to cut API latency by 40% and ship a payments module used by 2M users.',
- skills:'Python, JavaScript, React, Node.js, SQL, AWS, Docker, System Design, Team Leadership',languages:'English, Hindi',certs:'AWS Certified Developer – Associate',
- exp:[{role:'Senior Software Engineer',company:'Acme Technologies',loc:'Bengaluru',start:'Jan 2021',end:'Present',bullets:'Led a 5-member team to redesign checkout APIs, reducing latency by 40%\nBuilt payments module processing 2M+ monthly transactions\nMentored 4 junior engineers and introduced code-review standards'}],
- edu:[{degree:'B.Tech, Computer Science',school:'VTU',year:'2019',score:'8.4 CGPA'}],projects:[{name:'ResumeBot',link:'github.com/rahulsharma/resumebot',desc:'Built an NLP tool that scores resumes against job descriptions'}]};
+ skills:'Python, JavaScript, React, Node.js, SQL, AWS, Docker, System Design, Team Leadership',languages:'English, Hindi',certs:'AWS Certified Developer – Associate',achievements:'Winner, Acme Hackathon 2023\nEmployee of the Year 2022',hobbies:'Chess, Trekking',
+ exp:[{role:'Senior Software Engineer',company:'Acme Technologies',loc:'Bengaluru',start:'Jan 2021',end:'Present',bullets:'Led a 5-member team to redesign checkout APIs, reducing latency by 40%\nBuilt payments module processing 2M+ monthly transactions\nMentored 4 junior engineers and introduced code-review standards'},{role:'Software Engineer',company:'Beta Soft',loc:'Pune',start:'Jul 2018',end:'Dec 2020',bullets:'Developed REST services in Node.js serving 500K daily requests\nAutomated deployments with Docker, cutting release time by 60%'}],
+ edu:[{degree:'B.Tech, Computer Science',school:'VTU',year:'2018',score:'8.4 CGPA'}],projects:[{name:'ResumeBot',link:'github.com/rahulsharma/resumebot',desc:'Built an NLP tool that scores resumes against job descriptions'}]};
 const acts={
- sample(){S={...S,...SAMPLE};fill();save()},
- print(){document.body.classList.remove('pc');const n=Math.ceil($('#sheet').offsetHeight/1123);if(n>2)toast(`CV ${n} pages का है – 1–2 pages बेहतर है`);setTimeout(()=>print(),n>2?900:0)},
+ sample(){S=norm({...S,...SAMPLE});fill();save()},
+ print(b){const n=Math.ceil($('#sheet').offsetHeight/1123);if(n>2)toast(`CV ${n} pages का है – 1–2 pages बेहतर`);run(b,()=>pdfOut($('#sheet'),fname()+'.pdf'))},
+ printLetter(b){document.body.dataset.view='letter';run(b,()=>pdfOut($('#letter'),fname()+'_CoverLetter.pdf'))},
  printCard(){renderCard();document.body.classList.add('pc');print();setTimeout(()=>document.body.classList.remove('pc'),500)},
  rmphoto(){S.photo='';S.showPhoto=false;fill();save()},
  add(b){S[b.dataset.l].push({});lists();save();render()},
  del(b){S[b.dataset.l].splice(+b.dataset.i,1);lists();save();render()},
+ mv(b){const i=+b.dataset.i,j=i+ +b.dataset.d;if(j<0||j>=S.order.length)return;[S.order[i],S.order[j]]=[S.order[j],S.order[i]];save();render()},
+ hid(b){const k=b.dataset.sk;S.hidden[k]=!S.hidden[k];save();render()},
+ applyType(){const t=TYPES[$('#ctype').value];S.order=t.order.slice();S.labels={...t.labels};S.hidden={};S.tpl=t.tpl;if(t.showDecl)S.showDecl=true;fill();save();toast('Format लागू: '+t.n)},
+ fit1(){let f=S.fs;S.fs=1;for(f=1;f>=.8;f-=.02){S.fs=+f.toFixed(2);render();if($('#sheet').offsetHeight<=1126)break}$('[data-k=fs]').value=S.fs;save();toast($('#sheet').offsetHeight<=1126?'1 page में fit ✔':'पूरा fit नहीं हुआ – content घटाएँ')},
+ localSummary(){S.summary=`${S.title||'Professional'} with ${yrs()?yrs()+'+ years of':'strong'} experience${csv(S.skills).length?' in '+csv(S.skills).slice(0,4).join(', '):''}. Proven track record of delivering results, collaborating across teams and learning quickly. Seeking to contribute these strengths to a growth-oriented organisation.`;fill();save()},
  settings(){const c=cfg();$('#prov').value=c.provider;$('#key').value=c.key;$('#model').value=c.model;$('#dlg').showModal()},
- closeCfg(){$('#dlg').close()},
+ closeDlg(b){b.closest('dialog').close()},
  saveCfg(){localStorage.setItem(CK,JSON.stringify({provider:$('#prov').value,key:$('#key').value.trim(),model:$('#model').value.trim()}));$('#dlg').close();toast('Saved')},
- ats(){ats()},aiSummary:()=>run('#t1 [data-act=aiSummary]',aiSummary),aiImport:()=>run('[data-act=aiImport]',aiImport),aiTailor:()=>run('[data-act=aiTailor]',aiTailor),aiAsk:()=>run('[data-act=aiAsk]',aiAsk),
- aiBul(b){return run(null,()=>aiBul(+b.dataset.i),b)}
+ unlock(){localStorage.setItem('procv.pro','1');$('#paydlg').close();render();toast('Pro unlocked (demo)')},
+ cvmenu(){$('#cvdlg').showModal()},
+ cvNew(){const id='cv'+Date.now();DB.list[id]={name:'CV '+(Object.keys(DB.list).length+1),data:{}};DB.cur=id;S=norm({});fill();save();$('#cvdlg').close()},
+ cvDup(){const id='cv'+Date.now();DB.list[id]={name:DB.list[DB.cur].name+' copy',data:JSON.parse(JSON.stringify(S))};DB.cur=id;S=norm(DB.list[id].data);fill();save();$('#cvdlg').close()},
+ cvRen(){const n=prompt('CV का नाम',DB.list[DB.cur].name);if(n){DB.list[DB.cur].name=n;fill();save()}$('#cvdlg').close()},
+ cvDel(){if(Object.keys(DB.list).length<2)return toast('आख़िरी CV delete नहीं हो सकता');if(!confirm('यह CV delete करें?'))return;delete DB.list[DB.cur];DB.cur=Object.keys(DB.list)[0];S=norm(DB.list[DB.cur].data);fill();save();$('#cvdlg').close()},
+ exTxt(){saveBlob(fname()+'.txt',new Blob([txtCV()],{type:'text/plain'}))},
+ exDoc(){saveBlob(fname()+'.doc',new Blob([docHTML()],{type:'application/msword'}))},
+ exJson(){saveBlob(fname()+'_backup.json',new Blob([JSON.stringify(S)],{type:'application/json'}))},
+ ats(){ats()},
+ aiSummary:b=>run(b,aiSummary),aiImport:b=>run(b,aiImport),aiTailor:b=>run(b,aiTailor),aiAsk:b=>run(b,aiAsk),aiBul:b=>run(b,()=>aiBul(+b.dataset.i)),aiTool:b=>run(b,()=>aiTool(b.dataset.w)),clAI:b=>run(b,clAI),
+ clLocal(){S.cl.text=clLocal();fill();save()},
+ cardStudio(){$('[data-tab=t8]').click();loadT('card')},
+ gText(){G.layers.push(gT('Your text',G.w/2,G.h/2,Math.round(G.w/14),'#ffffff',true,'center'));G.sel=G.layers.length-1;syncProps();draw()},
+ gRect(){G.layers.push(gR(G.w*.2,G.h*.4,G.w*.6,G.h*.2,'#ffffff',24,.9));G.sel=G.layers.length-1;syncProps();draw()},
+ gDel(){if(G.sel>=0){G.layers.splice(G.sel,1);G.sel=-1;syncProps();draw()}},
+ gFront(){if(G.sel>=0){G.layers.push(G.layers.splice(G.sel,1)[0]);G.sel=G.layers.length-1;draw()}},
+ gExport(b){run(b,async()=>{draw(false);const bl=await new Promise(r=>cv.toBlob(r,'image/png'));draw();await saveBlob('design_'+Date.now()+'.png',bl)})}
 };
-document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(b&&acts[b.dataset.act])acts[b.dataset.act](b)});
+$('#jsonfile').onchange=async e=>{try{S=norm(JSON.parse(await e.target.files[0].text()));fill();save();$('#cvdlg').close();toast('Restore हो गया')}catch{toast('गलत file')}};
 $('#prov').onchange=()=>{$('#model').value=$('#prov').value==='gemini'?'gemini-2.0-flash':'claude-haiku-5-5'};
 
-/* ---------- ATS checker (local, rule-based) ---------- */
-const VERBS=new Set('led managed built developed designed created improved increased reduced launched delivered implemented optimized automated analyzed drove achieved established streamlined coordinated mentored negotiated generated owned scaled resolved trained secured migrated architected spearheaded initiated executed enhanced engineered deployed maintained supervised planned organized'.split(' '));
+/* ---------- ATS checker (local) ---------- */
+const VERBS=new Set('led managed built developed designed created improved increased reduced launched delivered implemented optimized optimised automated analyzed analysed drove achieved established streamlined coordinated mentored negotiated generated owned scaled resolved trained secured migrated architected spearheaded initiated executed enhanced engineered deployed maintained supervised planned organized organised handled operated installed repaired sold served taught'.split(' '));
 const STOP=new Set('the and for with that this you your are will have has from our their they about into over per can all any who such but not use using work working ability strong skills experience years year must should may also etc able including include other more new well job role team looking required preferred responsibilities requirements candidate company'.split(' '));
+const WEAK=/responsible for|worked on|helped|duties included|was involved in|team player|hard[- ]?working|self[- ]motivated|go-getter|results[- ]oriented|detail[- ]oriented|synergy|think outside the box/gi;
 const words=t=>(String(t).toLowerCase().match(/[a-z][a-z+#.]{1,}/g)||[]);
-function allText(){return [S.name,S.title,S.summary,S.skills,S.certs,...S.exp.flatMap(e=>[e.role,e.company,e.bullets]),...S.edu.flatMap(e=>[e.degree,e.school]),...S.projects.flatMap(p=>[p.name,p.desc])].join(' ')}
+const allText=()=>[S.name,S.title,S.summary,S.skills,S.certs,S.achievements,...S.exp.flatMap(e=>[e.role,e.company,e.bullets]),...S.edu.flatMap(e=>[e.degree,e.school]),...S.projects.flatMap(p=>[p.name,p.desc])].join(' ');
 function ats(){
- let sc=0,tips=[];const add=(p,ok,msg)=>{if(ok)sc+=p;else tips.push(msg)};
- add(10,S.name&&S.email&&S.phone,'Name, email और phone तीनों भरें');
- add(5,S.location,'Location जोड़ें');
- const sw=words(S.summary).length;add(10,sw>=30&&sw<=90,'Summary 30–90 words की रखें (अभी '+sw+')');
- add(10,S.exp.some(e=>e.role&&e.company),'कम से कम एक experience जोड़ें');
- add(10,csv(S.skills).length>=8,'कम से कम 8 skills जोड़ें (अभी '+csv(S.skills).length+')');
- add(5,S.edu.length>0,'Education जोड़ें');
- const bl=S.exp.flatMap(e=>lines(e.bullets));
- const av=bl.length&&bl.filter(b=>VERBS.has(words(b)[0])).length/bl.length;
- add(10,av>=.6,'Bullets की शुरुआत action verb से करें (Led, Built, Reduced…) — अभी '+Math.round((av||0)*100)+'%');
- const qn=bl.length&&bl.filter(b=>/\d/.test(b)).length/bl.length;
- add(10,qn>=.4,'ज़्यादा bullets में numbers/impact जोड़ें (%, ₹, users) — अभी '+Math.round((qn||0)*100)+'%');
- const gl=bl.length&&bl.filter(b=>{const n=words(b).length;return n>=8&&n<=28}).length/bl.length;
- add(5,gl>=.7,'Bullets 8–28 words के रखें');
- add(5,bl.length>=3,'Experience में कम से कम 3 bullets रखें');
- add(5,S.tpl!=='modern','Modern (2-column) template पुराने ATS में गड़बड़ कर सकता है — Classic चुनें');
- let max=85,html='',kw='';
- const jd=$('#jd').value.trim();
- if(jd){
-  const f={};words(jd).filter(w=>w.length>2&&!STOP.has(w)).forEach(w=>f[w]=(f[w]||0)+1);
-  const top=Object.entries(f).sort((a,b)=>b[1]-a[1]).slice(0,25).map(x=>x[0]),have=new Set(words(allText()));
-  const hit=top.filter(w=>have.has(w)),miss=top.filter(w=>!have.has(w));
-  sc+=Math.round(15*hit.length/Math.max(1,top.length));max=100;
-  if(miss.length)tips.push('JD के ये keywords (जहाँ सच हो) जोड़ें: '+miss.slice(0,10).join(', '));
-  kw=`<h2>Keyword match: ${hit.length}/${top.length}</h2>${hit.map(w=>`<span class="chip">${esc(w)}</span>`).join('')}${miss.map(w=>`<span class="chip miss">${esc(w)}</span>`).join('')}`;
- }
- const pct=Math.min(100,Math.round(sc/max*100));
- const pages=Math.ceil($('#sheet').offsetHeight/1123);if(pages>2)tips.push(`CV ${pages} pages का है — 1–2 pages रखें`);
- $('#atsOut').innerHTML=`<h2>Score: ${pct}/100</h2><div class="bar"><i style="width:${pct}%;background:${pct>=80?'#16a34a':pct>=60?'#d97706':'#dc2626'}"></i></div>${tips.length?'<h2>सुधार</h2><ul>'+tips.map(t=>`<li>${esc(t)}</li>`).join('')+'</ul>':'<p>शानदार! कोई बड़ी कमी नहीं मिली 🎉</p>'}${kw}`;
+ const c=[],add=(w,ok,sev,msg)=>c.push({w,ok:!!ok,sev,msg});
+ const bl=S.exp.flatMap(e=>lines(e.bullets)),txt=[S.summary,...bl,S.achievements].join(' ');
+ const pct=(a,b)=>b?a/b:0,verbR=pct(bl.filter(b=>VERBS.has(words(b)[0])).length,bl.length),numR=pct(bl.filter(b=>/\d/.test(b)).length,bl.length),lenR=pct(bl.filter(b=>{const n=words(b).length;return n>=8&&n<=28}).length,bl.length);
+ const sw=words(S.summary).length,pages=$('#sheet').offsetHeight/1123,weak=[...new Set((txt.match(WEAK)||[]).map(x=>x.toLowerCase()))];
+ add(8,S.name&&S.email&&S.phone,'h','Name, email और phone तीनों भरें');
+ add(3,/^[\w.+-]+@[\w-]+\.[\w.]+$/.test(S.email||'')&&!/\d{4,}/.test((S.email||'').split('@')[0]),'l','Professional email रखें (नाम-आधारित, बिना लंबे नंबरों के)');
+ add(3,S.location,'l','City / location जोड़ें');
+ add(3,/linkedin|github|behance|portfolio|http|\.com|\.in/i.test(S.links||''),'l','LinkedIn / portfolio link जोड़ें');
+ add(8,sw>=30&&sw<=90,'m','Summary 30–90 words की रखें (अभी '+sw+')');
+ add(10,S.exp.some(e=>e.role&&e.company),'h','कम से कम एक experience (role + company) जोड़ें');
+ add(5,S.exp.length&&S.exp.every(e=>{const n=lines(e.bullets).length;return n>=2&&n<=7}),'m','हर job में 2–6 bullets रखें');
+ add(8,csv(S.skills).length>=8,'m','कम से कम 8 relevant skills जोड़ें (अभी '+csv(S.skills).length+')');
+ add(5,S.edu.length,'m','Education जोड़ें');
+ add(9,verbR>=.6,'m','Bullets की शुरुआत action verb से करें (Led, Built, Reduced…) — अभी '+Math.round(verbR*100)+'%');
+ add(9,numR>=.4,'m','ज़्यादा bullets में numbers/impact जोड़ें (%, ₹, users, time) — अभी '+Math.round(numR*100)+'%');
+ add(4,lenR>=.7,'l','Bullets 8–28 words के रखें');
+ add(5,!weak.length,'m','कमज़ोर/घिसे-पिटे phrases हटाएँ: '+weak.join(', '));
+ add(3,!/\b(I|my|me)\b/.test(txt),'l','CV में "I / my / me" न लिखें');
+ add(5,pages<=2.05,'m',`CV ≈ ${pages.toFixed(1)} pages है — 1–2 pages रखें (Design → Fit to 1 page)`);
+ add(5,!['modern','mono'].includes(S.tpl),'l','2-column template पुराने ATS में गड़बड़ कर सकता है — online apply के लिए single-column चुनें');
+ let kw='';const jd=$('#jd').value.trim();
+ if(jd){const f={};words(jd).filter(w=>w.length>2&&!STOP.has(w)).forEach(w=>f[w]=(f[w]||0)+1);
+  const top=Object.entries(f).sort((a,b)=>b[1]-a[1]).slice(0,25).map(x=>x[0]),have=new Set(words(allText())),hit=top.filter(w=>have.has(w)),miss=top.filter(w=>!have.has(w));
+  c.push({w:15,part:pct(hit.length,top.length),ok:hit.length/Math.max(1,top.length)>=.7,sev:'h',msg:'JD के keywords (जहाँ सच हो) जोड़ें: '+miss.slice(0,10).join(', ')});
+  kw=`<h2>Keyword match: ${hit.length}/${top.length}</h2>${hit.map(w=>`<span class="chip">${esc(w)}</span>`).join('')}${miss.map(w=>`<span class="chip miss">${esc(w)}</span>`).join('')}`}
+ const tot=c.reduce((a,x)=>a+x.w,0),got=c.reduce((a,x)=>a+(x.part!=null?x.w*x.part:x.ok?x.w:0),0),sc=Math.round(got/tot*100),bad=c.filter(x=>!x.ok);
+ $('#atsOut').innerHTML=`<h2>Score: ${sc}/100 <small style="font-weight:400">(${c.length-bad.length}/${c.length} checks pass)</small></h2><div class="bar"><i style="width:${sc}%;background:${sc>=80?'#16a34a':sc>=60?'#d97706':'#dc2626'}"></i></div>`+
+  (bad.length?['h','m','l'].map(s=>bad.filter(x=>x.sev===s).map(x=>`<div class="sev ${s}">${s==='h'?'🔴':s==='m'?'🟠':'🔵'} ${esc(x.msg)}</div>`).join('')).join(''):'<p>शानदार! कोई बड़ी कमी नहीं 🎉</p>')+
+  (S.showPhoto?'<div class="sev l">ℹ Photo: India/Gulf में ठीक; US/UK/EU के job portals पर हटाना बेहतर।</div>':'')+kw;
 }
 
 /* ---------- AI ---------- */
 const cfg=()=>{try{return {provider:'gemini',key:'',model:'gemini-2.0-flash',...JSON.parse(localStorage.getItem(CK)||'{}')}}catch{return {provider:'gemini',key:'',model:'gemini-2.0-flash'}}};
 async function ai(prompt){
- const c=cfg();if(!c.key){acts.settings();throw new Error('पहले AI Settings में API key डालें')}
+ const c=cfg();if(!c.key){acts.settings();throw new Error('पहले ⚙ में API key डालें')}
  if(c.provider==='gemini'){
   const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(c.model)}:generateContent?key=${encodeURIComponent(c.key)}`,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})});
-  const j=await r.json();if(!r.ok)throw new Error(j.error?.message||'Gemini error');return j.candidates?.[0]?.content?.parts?.map(p=>p.text).join('')||'';
- }
- const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':c.key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:c.model,max_tokens:2000,messages:[{role:'user',content:prompt}]})});
+  const j=await r.json();if(!r.ok)throw new Error(j.error?.message||'Gemini error');return j.candidates?.[0]?.content?.parts?.map(p=>p.text).join('')||'';}
+ const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':c.key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:c.model,max_tokens:2500,messages:[{role:'user',content:prompt}]})});
  const j=await r.json();if(!r.ok)throw new Error(j.error?.message||'Claude error');return j.content?.map(p=>p.text||'').join('')||'';
 }
-async function run(sel,fn,btn){const b=btn||$(sel);if(b)b.disabled=true;try{await fn()}catch(e){toast(e.message||'AI error')}finally{if(b)b.disabled=false}}
+async function run(b,fn){if(b)b.disabled=true;try{await fn()}catch(e){toast(e.message||'Error')}finally{if(b)b.disabled=false}}
 const RULES='Rules: ATS-friendly, no first-person pronouns, strong action verbs, concise. NEVER invent facts, employers, dates or numbers that are not in the input.';
 const jparse=t=>{const m=String(t).match(/\{[\s\S]*\}/);if(!m)throw new Error('AI ने सही format नहीं दिया, फिर कोशिश करें');return JSON.parse(m[0])};
-async function aiSummary(){const t=await ai(`Write a 3-sentence professional resume summary (max 70 words) for this candidate. ${RULES}\nReturn only the summary text.\n\n${JSON.stringify({title:S.title,skills:S.skills,exp:S.exp,old:S.summary})}`);S.summary=t.trim();fill();save()}
-async function aiBul(i){const e=S.exp[i];const t=await ai(`Rewrite these resume bullets for the role "${e.role}" at "${e.company}". ${RULES} Keep numbers only if already present. Return only bullets, one per line, no numbering.\n\n${e.bullets}`);e.bullets=lines(t).join('\n');fill();save()}
+const ctx=()=>JSON.stringify({name:S.name,title:S.title,years:yrs(),skills:S.skills,summary:S.summary,exp:S.exp,edu:S.edu,projects:S.projects});
+async function aiSummary(){S.summary=(await ai(`Write a 3-sentence professional resume summary (max 70 words). ${RULES}\nReturn only the summary.\n\n${ctx()}`)).trim();fill();save()}
+async function aiBul(i){const e=S.exp[i];e.bullets=lines(await ai(`Rewrite these resume bullets for "${e.role}" at "${e.company}". ${RULES} Keep numbers only if present. Return only bullets, one per line.\n\n${e.bullets}`)).join('\n');fill();save()}
 async function aiImport(){
  const txt=$('#cvpaste').value.trim();if(!txt)return toast('पहले CV file चुनें या text paste करें');
- const j=jparse(await ai(`Parse this CV and lightly improve the wording. ${RULES} Return ONLY JSON: {"name","title","email","phone","location","links":"comma separated","summary","skills":"comma separated","languages":"comma separated","certs":"one per line","exp":[{"role","company","loc","start","end","bullets":"one per line"}],"edu":[{"degree","school","year","score"}],"projects":[{"name","link","desc":"one per line"}]}\n\nCV:\n${txt.slice(0,12000)}`));
- ['exp','edu','projects'].forEach(k=>j[k]=Array.isArray(j[k])?j[k]:[]);S={...S,...j};fill();save();toast('CV import हो गया ✔')
-}
+ const j=jparse(await ai(`Parse this CV and lightly improve the wording. ${RULES} Return ONLY JSON: {"name","title","email","phone","location","links":"comma separated","summary","skills":"comma separated","languages":"comma separated","certs":"one per line","achievements":"one per line","hobbies":"comma separated","exp":[{"role","company","loc","start","end","bullets":"one per line"}],"edu":[{"degree","school","year","score"}],"projects":[{"name","link","desc":"one per line"}]}\n\nCV:\n${txt.slice(0,12000)}`));
+ ['exp','edu','projects'].forEach(k=>j[k]=Array.isArray(j[k])?j[k]:[]);S=norm({...S,...j});fill();save();toast('CV import हो गया ✔')}
 async function aiTailor(){
- const jd=$('#jd').value.trim();if(!jd)return toast('पहले Job description डालें');
- const j=jparse(await ai(`Tailor this resume summary to the job description. ${RULES} Return ONLY JSON {"summary":"...","missing_skills_to_consider":["..."],"tips":["..."]}.\n\nResume: ${JSON.stringify({title:S.title,summary:S.summary,skills:S.skills,exp:S.exp})}\n\nJob description:\n${jd.slice(0,6000)}`));
+ const jd=$('#jd').value.trim();if(!jd)return toast('ATS टैब में Job description डालें');
+ const j=jparse(await ai(`Tailor this resume summary to the job description. ${RULES} Return ONLY JSON {"summary":"...","missing_skills_to_consider":["..."],"tips":["..."]}.\n\nResume: ${ctx()}\n\nJob description:\n${jd.slice(0,6000)}`));
  if(j.summary){S.summary=j.summary;fill();save()}
- $('#atsOut').innerHTML=`<h2>Tailored ✔ Summary update हुई</h2>${j.missing_skills_to_consider?.length?'<p>Skills जो आपके पास हों तो जोड़ें:</p>'+j.missing_skills_to_consider.map(w=>`<span class="chip miss">${esc(w)}</span>`).join(''):''}<ul>${(j.tips||[]).map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`;
-}
-async function aiAsk(){const q=$('#ask').value.trim();if(!q)return;$('#askOut').innerHTML='<div class="out">…</div>';const t=await ai(`You are a concise, practical career coach for Indian job seekers. Reply in the user's language.\nCandidate data: ${JSON.stringify({title:S.title,skills:S.skills,exp:S.exp,summary:S.summary})}\n\nQuestion: ${q}`);$('#askOut').innerHTML=`<div class="out">${esc(t)}</div>`}
+ $('#aiOut').innerHTML=`<h2>Tailored ✔ Summary update हुई</h2>${(j.missing_skills_to_consider||[]).map(w=>`<span class="chip miss">${esc(w)}</span>`).join('')}<ul>${(j.tips||[]).map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`}
+const TOOLS={linkedin:'Write a LinkedIn headline (max 220 chars) and an About section (120-160 words, first-person allowed here, human tone).',interview:'List the 10 most likely interview questions for the target role with a 2-line how-to-answer tip each, based on the candidate\'s background.',gap:'List skills the candidate is missing for the target role (priority order) and a realistic 30-day learning plan with free resources.',salary:'Give a short salary negotiation script for India (email + phone) for this candidate and target role, with a realistic market range reasoning and what to say if offer is low. Mention to verify numbers on current salary sites.',msg:'Write a short cold message (LinkedIn/WhatsApp) and a short application email to a recruiter for the target role. Include a subject line.'};
+async function aiTool(w){const t=await ai(`${TOOLS[w]} Do not invent facts about the candidate. Target: ${$('#tgt').value||S.title||'(not given)'}\nJob description (if any): ${$('#jd').value.slice(0,3000)}\nCandidate: ${ctx()}`);
+ $('#aiOut').innerHTML=`<div class="out">${esc(t)}</div><div class="rowb"><button onclick="navigator.clipboard.writeText(this.parentNode.previousSibling.textContent);toast('Copied')">Copy</button></div>`}
+async function aiAsk(){const q=$('#ask').value.trim();if(!q)return;$('#askOut').innerHTML='<div class="out">…</div>';const t=await ai(`You are a concise, practical career coach for Indian job seekers. Reply in the user's language.\nCandidate: ${ctx()}\n\nQuestion: ${q}`);$('#askOut').innerHTML=`<div class="out">${esc(t)}</div>`}
+function clLocal(){const c=S.cl,y=yrs(),sk=csv(S.skills).slice(0,3).join(', '),e=S.exp[0];
+ return `Dear ${c.manager||'Hiring Manager'},\n\nI am writing to express my interest in the ${c.role||S.title||'open'} position at ${c.company||'your company'}. ${y?`With ${y}+ years of experience`:'With my background'}${sk?` in ${sk}`:''}, I am confident that I can contribute effectively to your team.\n\n${e&&e.role?`In my role as ${e.role}${e.company?' at '+e.company:''}, `:''}I have focused on delivering measurable results, collaborating across teams and continuously improving my skills.${c.notes?'\n\n'+c.notes:''}\n\nI would welcome the opportunity to discuss how my experience aligns with your needs. Thank you for your time and consideration.\n\nSincerely,\n${S.name}\n${[S.phone,S.email].filter(Boolean).join(' | ')}`}
+async function clAI(){const c=S.cl;S.cl.text=(await ai(`Write a concise, genuine cover letter (170-220 words) for ${c.role||S.title} at ${c.company||'the company'}${c.manager?', addressed to '+c.manager:''}. ${RULES} Extra points to include: ${c.notes||'none'}. Job description: ${$('#jd').value.slice(0,3000)}\nCandidate: ${ctx()}\nReturn only the letter body from the greeting to the sign-off with the candidate name.`)).trim();fill();save()}
 
 /* ---------- CV file import ---------- */
 async function pdfText(file){
- if(!window.pdfjsLib){await new Promise((ok,no)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';s.onload=ok;s.onerror=()=>no(new Error('PDF reader load नहीं हुआ (internet?)'));document.head.appendChild(s)});pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'}
+ if(!window.pdfjsLib){await loadJs('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'}
  const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;let t='';
- for(let p=1;p<=pdf.numPages;p++){const c=await(await pdf.getPage(p)).getTextContent();t+=c.items.map(i=>i.str).join(' ')+'\n'}return t;
-}
+ for(let p=1;p<=pdf.numPages;p++){const c=await(await pdf.getPage(p)).getTextContent();t+=c.items.map(i=>i.str).join(' ')+'\n'}return t}
 $('#cvfile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{$('#cvpaste').value=/pdf$/i.test(f.name)?await pdfText(f):await f.text();toast('Text निकल गया — अब Import दबाएँ')}catch(x){toast(x.message)}};
 
+/* ---------- Design Studio (canvas) ---------- */
+const cv=$('#gc'),gx=cv.getContext('2d');
+const G={w:1080,h:1080,c1:'#4f46e5',c2:'#7c3aed',grad:true,layers:[],sel:-1};
+const gT=(text,x,y,size,color='#fff',bold=true,align='left')=>({t:'text',text,x,y,size,color,bold,align,font:'Arial'});
+const gR=(x,y,w,h,color,r=0,alpha=1)=>({t:'rect',x,y,w,h,color,r,alpha});
+const setFont=L=>gx.font=`${L.bold?'700':'400'} ${L.size}px ${L.font||'Arial'}`;
+function bbox(L){
+ if(L.t==='text'){setFont(L);const ls=String(L.text).split('\n'),w=Math.max(20,...ls.map(l=>gx.measureText(l).width)),h=L.size*1.25*ls.length;return{x:L.align==='center'?L.x-w/2:L.align==='right'?L.x-w:L.x,y:L.y,w,h}}
+ return{x:L.x,y:L.y,w:L.w,h:L.h}}
+function rr(x,y,w,h,r){gx.beginPath();gx.roundRect?gx.roundRect(x,y,w,h,r):gx.rect(x,y,w,h)}
+function draw(sel=true){
+ gx.clearRect(0,0,G.w,G.h);
+ if(G.grad){const g=gx.createLinearGradient(0,0,G.w,G.h);g.addColorStop(0,G.c1);g.addColorStop(1,G.c2);gx.fillStyle=g}else gx.fillStyle=G.c1;gx.fillRect(0,0,G.w,G.h);
+ G.layers.forEach(L=>{
+  if(L.t==='rect'){gx.globalAlpha=L.alpha??1;gx.fillStyle=L.color;rr(L.x,L.y,L.w,L.h,L.r||0);gx.fill();gx.globalAlpha=1}
+  else if(L.t==='img')gx.drawImage(L.el,L.x,L.y,L.w,L.h);
+  else{setFont(L);gx.fillStyle=L.color;gx.textAlign=L.align||'left';gx.textBaseline='top';String(L.text).split('\n').forEach((l,i)=>gx.fillText(l,L.x,L.y+i*L.size*1.25))}
+ });
+ if(sel&&G.sel>=0&&G.layers[G.sel]){const b=bbox(G.layers[G.sel]);gx.strokeStyle='#00b4ff';gx.lineWidth=Math.max(2,G.w/350);gx.setLineDash([12,8]);gx.strokeRect(b.x-6,b.y-6,b.w+12,b.h+12);gx.setLineDash([])}
+}
+function setSize(w,h){G.w=cv.width=w;G.h=cv.height=h;$('#gsize').value=`${w}x${h}`;draw()}
+const STPL={
+ hire:{w:1080,h:1080,c1:'#4f46e5',c2:'#7c3aed',n:"We're Hiring",b:()=>[gR(80,90,150,14,'#fff'),gT("WE'RE\nHIRING",80,160,190),gT((S.title||'JOB ROLE').toUpperCase(),80,620,64,'#fde68a'),gT('Apply: '+(S.email||'email@company.com'),80,880,44,'#fff',false),gT(S.name||'Company Name',80,960,40,'#e0e7ff',false)]},
+ open:{w:1080,h:1080,c1:'#0f766e',c2:'#14b8a6',n:'#OpenToWork',b:()=>[gR(60,60,960,960,'#ffffff',40,.12),gT('#OPENTOWORK',100,140,92),gT(S.name||'Your Name',100,340,110),gT(S.title||'Your title',100,490,58,'#ccfbf1',false),gT([S.email,S.phone].filter(Boolean).join('\n'),100,860,40,'#fff',false)]},
+ banner:{w:1584,h:396,c1:'#111827',c2:'#4f46e5',n:'LinkedIn banner',b:()=>[gT(S.name||'Your Name',80,90,92),gT(S.title||'Your title',84,210,44,'#c7d2fe',false),gT(csv(S.skills).slice(0,4).join('  •  '),84,290,32,'#fff',false)]},
+ quote:{w:1080,h:1080,c1:'#fef3c7',c2:'#fcd34d',n:'Quote',b:()=>[gT('“Success is the sum of\nsmall efforts, repeated\nday in and day out.”',540,330,72,'#78350f',true,'center'),gT('— '+(S.name||'Your Name'),540,860,44,'#92400e',false,'center')]},
+ card:{w:1050,h:600,c1:'#ffffff',c2:null,n:'Visiting card',b:()=>[gR(0,0,40,600,S.accent),gT(S.name||'Your Name',90,90,64,'#111827'),gT(S.title||'Your title',90,170,34,'#555',false),gT([S.phone,S.email,csv(S.links)[0],S.location].filter(Boolean).join('\n'),90,330,32,'#222',false)]},
+ poster:{w:1240,h:1754,c1:'#7c2d12',c2:'#f97316',n:'Poster',b:()=>[gT('YOUR\nHEADLINE',100,220,190),gR(100,640,220,16,'#fff'),gT('Add details here\nDate • Time • Venue',100,740,60,'#fff7ed',false),gT(S.name||'',100,1560,44,'#ffedd5',false)]},
+};
+function loadT(k){const t=STPL[k];Object.assign(G,{c1:t.c1,c2:t.c2||t.c1,grad:!!t.c2});G.layers=t.b();G.sel=-1;$('#gc1').value=G.c1;$('#gc2').value=G.c2;$('#ggrad').checked=G.grad;setSize(t.w,t.h);syncProps()}
+function initStudio(){if(initStudio.d)return draw();initStudio.d=1;$('#stpls').innerHTML=Object.entries(STPL).map(([k,v])=>`<button data-st="${k}">${v.n}</button>`).join('');loadT('hire')}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-st]');if(b)loadT(b.dataset.st)});
+$('#gsize').onchange=e=>{const[w,h]=e.target.value.split('x').map(Number);setSize(w,h)};
+[['#gc1','c1'],['#gc2','c2']].forEach(([s,k])=>$(s).oninput=e=>{G[k]=e.target.value;draw()});$('#ggrad').onchange=e=>{G.grad=e.target.checked;draw()};
+$('#gimg').onchange=e=>{const f=e.target.files[0];if(!f)return;const im=new Image();im.onload=()=>{const w=Math.min(G.w*.5,im.width);G.layers.push({t:'img',el:im,x:G.w*.25,y:G.h*.25,w,h:w*im.height/im.width,ratio:im.height/im.width});G.sel=G.layers.length-1;syncProps();draw()};im.src=URL.createObjectURL(f)};
+function syncProps(){const L=G.layers[G.sel],p=$('#gprops');p.style.display=L?'block':'none';if(!L)return;
+ const t=L.t==='text';$('#gtext').parentNode;$('#gtext').style.display=t?'block':'none';$('#gtext').value=t?L.text:'';
+ $('#gw').value=t?L.size:L.w;$('#gh').disabled=t||L.t==='img';$('#gh').value=L.h||0;$('#gcol').value=L.color||'#ffffff';$('#gcol').disabled=L.t==='img';$('#galign').value=L.align||'left';$('#gbold').checked=!!L.bold}
+const L0=()=>G.layers[G.sel];
+$('#gtext').oninput=e=>{L0().text=e.target.value;draw()};
+$('#gw').oninput=e=>{const L=L0(),v=+e.target.value;if(L.t==='text')L.size=v;else{L.w=v;if(L.t==='img')L.h=v*L.ratio}draw()};
+$('#gh').oninput=e=>{L0().h=+e.target.value;draw()};
+$('#gcol').oninput=e=>{L0().color=e.target.value;draw()};$('#galign').onchange=e=>{L0().align=e.target.value;draw()};$('#gbold').onchange=e=>{L0().bold=e.target.checked;draw()};
+const gpt=e=>{const r=cv.getBoundingClientRect(),s=Math.min(r.width/G.w,r.height/G.h),ox=(r.width-G.w*s)/2,oy=(r.height-G.h*s)/2;return{x:(e.clientX-r.left-ox)/s,y:(e.clientY-r.top-oy)/s}};
+let drag=null;
+cv.addEventListener('pointerdown',e=>{const p=gpt(e);let hit=-1;for(let i=G.layers.length-1;i>=0;i--){const b=bbox(G.layers[i]);if(p.x>=b.x&&p.x<=b.x+b.w&&p.y>=b.y&&p.y<=b.y+b.h){hit=i;break}}
+ G.sel=hit;drag=hit>=0?{dx:p.x-G.layers[hit].x,dy:p.y-G.layers[hit].y}:null;if(drag)cv.setPointerCapture(e.pointerId);syncProps();draw()});
+cv.addEventListener('pointermove',e=>{if(!drag)return;const p=gpt(e),L=G.layers[G.sel];L.x=p.x-drag.dx;L.y=p.y-drag.dy;draw()});
+cv.addEventListener('pointerup',()=>drag=null);
+
 /* ---------- boot ---------- */
-if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+if('serviceWorker'in navigator&&location.protocol==='https:'&&!native())navigator.serviceWorker.register('sw.js').catch(()=>{});
 fill();
 </script></body></html>
